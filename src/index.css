@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+@theme {
+  /* PayBridge palette */
+  --color-background: #f5f7fa;
+  --color-surface: #f5f7fa;
+  --color-surface-container: #e9eef4;
+  --color-surface-container-low: #f0f3f7;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-high: #dfe6ee;
+  --color-surface-container-highest: #d3dce7;
+
+  --color-primary: #142d4e;
+  --color-primary-container: #173858;
+  --color-inverse-surface: #102b45;
+  --color-on-primary: #ffffff;
+  --color-on-primary-fixed: #ffffff;
+  --color-primary-fixed-dim: #c4d4e5;
+
+  --color-secondary: #087f8c;
+  --color-secondary-fixed: #c9f1ef;
+  --color-secondary-fixed-dim: #8bd8d4;
+  --color-secondary-container: #d8f5f2;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #075b63;
+  --color-on-secondary-fixed: #073d42;
+
+  --color-tertiary-fixed: #fef0c7;
+  --color-on-tertiary-fixed: #77551a;
+  --color-on-tertiary-fixed-variant: #8a641c;
+
+  --color-on-surface: #172b3f;
+  --color-on-surface-variant: #65768a;
+  --color-outline-variant: #a7b3c2;
+
+  /* Typography families */
+  --font-body-md: "Inter", sans-serif;
+  --font-body-sm: "Inter", sans-serif;
+  --font-headline-sm: "Inter", sans-serif;
+  --font-headline-md: "Inter", sans-serif;
+  --font-display-lg: "Inter", sans-serif;
+  --font-label-sm: "Inter", sans-serif;
+  --font-label-md: "Inter", sans-serif;
+  --font-code-token: "JetBrains Mono", monospace;
+
+  /* Typography sizes */
+  --text-display-lg: 2.25rem;
+  --text-headline-md: 1.75rem;
+  --text-headline-sm: 1.25rem;
+  --text-body-md: 0.9375rem;
+  --text-body-sm: 0.8125rem;
+  --text-label-md: 0.875rem;
+  --text-label-sm: 0.75rem;
+
+  /* Custom spacing used by the generated design */
+  --spacing-gutter: 1.5rem;
+  --spacing-margin-mobile: 1rem;
+  --spacing-margin: 2rem;
+  --spacing-space-xs: 0.25rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-space-md: 1rem;
+  --spacing-space-lg: 1.5rem;
+}
+
+/* Base page styling */
+:root {
+  font-family: "Inter", sans-serif;
+  color: #172b3f;
+  background: #f5f7fa;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Keep Material Symbols working if the font is loaded */
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+}
