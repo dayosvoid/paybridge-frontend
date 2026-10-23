@@ -6,8 +6,7 @@ import RemittancesPage from './pages/RemittancesPage'
 import TransactionsPage from './pages/TransactionsPage'
 import AccountStatementsPage from './pages/AccountStatementsPage'
 import ProfileKycPage from './pages/ProfileKycPage'
-import Layout from './components/Layout'
-import Home from './pages/Home'
+
 import NotFound from './pages/NotFound'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
@@ -20,6 +19,7 @@ export default function App() {
   return (
     <Routes>
       {/* Public authentication pages */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
@@ -51,9 +51,9 @@ export default function App() {
       </Route>
 
       {/* Public home page and fallback */}
-      <Route element={<Layout />}>
+      {/* <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
-      </Route>
+      </Route> */}
 
       <Route path="*" element={<NotFound />} />
     </Routes>

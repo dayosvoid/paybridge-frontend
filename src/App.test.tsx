@@ -1,63 +1,73 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+﻿import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { cleanup, render, screen } from '@testing-library/react'
+import { MemoryRouter, useLocation } from 'react-router-dom'
 import App from './App'
+import { resetSessionForTests } from './auth/session'
+
+function CurrentPath() {
+  return <output data-testid="current-path">{useLocation().pathname}</output>
+}
 
 function renderAt(path: string) {
   return render(
     <MemoryRouter initialEntries={[path]}>
       <App />
+      <CurrentPath />
     </MemoryRouter>,
   )
 }
 
+beforeEach(resetSessionForTests)
 afterEach(() => {
   cleanup()
+  resetSessionForTests()
   vi.unstubAllGlobals()
 })
 
-describe('App', () => {
-  it('shows the start page', () => {
-    renderAt('/')
-    expect(screen.getByRole('heading', { name: 'PayBridge' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Check the API' })).toBeInTheDocument()
+describe('App routing', () => {
+  it('redirects the homepage to the standalone login page', async () => {
+    const { container } = renderAt('/')
+    expect(await screen.findByRole('heading', { name: 'Sign in to PayBridge' })).toBeInTheDocument()
+    expect(screen.getByTestId('current-path')).toHaveTextContent(/^\/login$/)
+    expect(screen.getByLabelText('Email address')).toBeInTheDocument()
+    expect(screen.getByLabelText('Password', { exact: true })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Sign in' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Check the API' })).toBeNull()
+    expect(container.querySelector('#dashboard-navigation')).toBeNull()
   })
 
   it('shows a not-found page for unknown addresses', () => {
     renderAt('/nowhere')
     expect(screen.getByRole('heading', { name: 'Page not found' })).toBeInTheDocument()
+    expect(screen.getByTestId('current-path')).toHaveTextContent(/^\/nowhere$/)
   })
 
   it('shows the login form on the standalone login route', () => {
     renderAt('/login')
     expect(screen.getByRole('heading', { name: 'Sign in to PayBridge' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Sign in' })).toBeInTheDocument()
+    expect(screen.getByTestId('current-path')).toHaveTextContent(/^\/login$/)
   })
 
   it('shows the registration form on the standalone register route', () => {
     renderAt('/register')
     expect(screen.getByRole('heading', { name: 'Create your account' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /create account/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Create account' })).toBeInTheDocument()
+    expect(screen.getByLabelText('Full name')).toBeInTheDocument()
+    expect(screen.getByTestId('current-path')).toHaveTextContent(/^\/register$/)
   })
 
-  it('says the API is reachable when it answers 401', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(async () => new Response(JSON.stringify({ error: 'Unauthorized', message: 'x' }), { status: 401 })),
-    )
-    renderAt('/')
-
-    fireEvent.click(screen.getByRole('button', { name: 'Check the API' }))
-
-    expect(await screen.findByRole('status')).toHaveTextContent('reachable')
-  })
-
-  it('says so when the API cannot be reached', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => { throw new TypeError('Failed to fetch') }))
-    renderAt('/')
-
-    fireEvent.click(screen.getByRole('button', { name: 'Check the API' }))
-
-    expect(await screen.findByRole('alert')).toHaveTextContent('Cannot reach the server')
+  it.each([
+    '/dashboard', '/transfers', '/accounts', '/fx', '/remittances',
+    '/transactions', '/statements', '/profile', '/transfer', '/account',
+  ])('redirects unauthenticated visitors from %s to login', async path => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    const { container } = renderAt(path)
+    expect(await screen.findByRole('heading', { name: 'Sign in to PayBridge' })).toBeInTheDocument()
+    expect(screen.getByTestId('current-path')).toHaveTextContent(/^\/login$/)
+    expect(screen.getByRole('button', { name: 'Sign in' })).toBeInTheDocument()
+    expect(container.querySelector('#dashboard-navigation')).toBeNull()
+    expect(fetchMock).not.toHaveBeenCalled()
   })
 })
